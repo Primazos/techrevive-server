@@ -1,0 +1,17 @@
+version: '3.8'  # Usamos la versión 3.8 de Docker Compose (compatible con Docker Engine 19.03+)
+
+services:
+  mongo:
+    image: mongo:latest  # Usamos la imagen oficial de MongoDB
+    container_name: mongo_db  # Nombre personalizado para el contenedor
+    restart: always  # Reinicia el contenedor automáticamente si se detiene o falla
+    ports:
+      - 27017:27017  # Expone el puerto 27017 de MongoDB en tu máquina local
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root  # Usuario administrador
+      MONGO_INITDB_ROOT_PASSWORD: admin  # Contraseña segura para el usuario root
+    volumes:
+      - mongo-data:/data/db  # Volumen para persistencia de datos
+
+volumes:
+  mongo-data:  # Define un volumen para persistencia de datos

@@ -6,7 +6,11 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "docker:linux": "cd DDBB && sudo docker-compose up -d",
+    "docker:lstop": "cd DDBB && sudo docker-compose down",
+    "docker:win": "cd DDBB && docker-compose up -d",
+    "docker:wstop": "cd DDBB && docker-compose down"
   },
   "keywords": [],
   "author": "",
