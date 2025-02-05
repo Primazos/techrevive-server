@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import Product from "../models/productSchema.js";
-import cloudinary from "../config/cloudinaryConfig.js";
+import { upload } from "../config/cloudinaryConfig.js";
 
 // GET
 export const getProductById = async (req, res) => {
@@ -70,53 +70,50 @@ export const getProductsByCategory = async (req, res) => {
   }
 };
 
-// POST - Añadir un nuevo producto
-/* export const addProduct = async (req, res) => {
-  try {
-    const newProduct = new Product(req.body);
-    const savedProduct = await newProduct.save();
-    console.log(chalk.magentaBright("Producto guardado:", savedProduct._id));
-    res.status(201).json(savedProduct);
-  } catch (error) {
-    res.status(500).json({ message: "Error al crear el producto", error });
-  }
-}; */
+// POST
 export const addProduct = async (req, res) => {
-  try {
-    const { title, description, category, price, images, user_id } = req.body;
+  upload.array("images", 8)(req, res, async (err) => {
+    if (err) {
+      return res
+        .status(400)
+        .json({ message: "Error al subir archivos", error: err.message });
+    }
 
-    // Verificar que se reciban imágenes
-    if (!images || images.length === 0) {
+    const { title, description, category, price, user_id } = req.body;
+
+    if (!title || !price || !user_id) {
+      return res.status(400).json({
+        message: "Faltan campos obligatorios: título, precio o user_id",
+      });
+    }
+
+    if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: "Se deben subir imágenes" });
     }
 
-    // Subir las imágenes a Cloudinary y obtener las URLs
-    const uploadedImageUrls = [];
-    for (let image of images) {
-      const uploadedResponse = await cloudinary.uploader.upload(image, {
-        folder: "techrevive", // Carpeta donde se almacenará la imagen en Cloudinary
+    const uploadedImageUrls = req.files.map((file) => file.path);
+
+    try {
+      const newProduct = new Product({
+        title,
+        description,
+        category,
+        price,
+        user_id,
+        image_urls: uploadedImageUrls,
       });
-      uploadedImageUrls.push(uploadedResponse.secure_url); // Almacenar la URL
+
+      const savedProduct = await newProduct.save();
+      console.log(chalk.magentaBright("Producto guardado:", savedProduct._id));
+
+      res.status(201).json(savedProduct);
+    } catch (error) {
+      console.error(chalk.red("Error al crear el producto:", error));
+      res
+        .status(500)
+        .json({ message: "Error al crear el producto", error: error.message });
     }
-    console.log(uploadedImageUrls);
-
-    // Crear el nuevo producto con las URLs de las imágenes
-    const newProduct = new Product({
-      title,
-      description,
-      category,
-      price,
-      user_id,
-      image_urls: uploadedImageUrls, // Almacenar las URLs de las imágenes subidas
-    });
-
-    const savedProduct = await newProduct.save();
-    console.log(chalk.magentaBright("Producto guardado:", savedProduct._id));
-
-    res.status(201).json(savedProduct); // Devolver el producto creado
-  } catch (error) {
-    res.status(500).json({ message: "Error al crear el producto", error });
-  }
+  });
 };
 
 // PUT

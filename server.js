@@ -11,8 +11,7 @@ const app = express();
 app.use(cors());
 const PORT = 3001;
 
-/* app.use(express.json()); */
-app.use(express.json({ limit: "50mb" }));
+app.use(express.json());
 
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
