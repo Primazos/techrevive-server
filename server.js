@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import connectDB from "./config/db.js";
 import chalk from "chalk";
 import userRoutes from "./routes/userRoutes.js";
@@ -7,9 +8,11 @@ import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 
 const app = express();
+app.use(cors());
 const PORT = 3001;
 
-app.use(express.json());
+/* app.use(express.json()); */
+app.use(express.json({ limit: "50mb" }));
 
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);

@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import Product from "../models/productSchema.js";
+import cloudinary from "../config/cloudinaryConfig.js";
 
 // GET
 export const getProductById = async (req, res) => {
@@ -70,12 +71,49 @@ export const getProductsByCategory = async (req, res) => {
 };
 
 // POST - Añadir un nuevo producto
-export const addProduct = async (req, res) => {
+/* export const addProduct = async (req, res) => {
   try {
     const newProduct = new Product(req.body);
     const savedProduct = await newProduct.save();
     console.log(chalk.magentaBright("Producto guardado:", savedProduct._id));
     res.status(201).json(savedProduct);
+  } catch (error) {
+    res.status(500).json({ message: "Error al crear el producto", error });
+  }
+}; */
+export const addProduct = async (req, res) => {
+  try {
+    const { title, description, category, price, images, user_id } = req.body;
+
+    // Verificar que se reciban imágenes
+    if (!images || images.length === 0) {
+      return res.status(400).json({ message: "Se deben subir imágenes" });
+    }
+
+    // Subir las imágenes a Cloudinary y obtener las URLs
+    const uploadedImageUrls = [];
+    for (let image of images) {
+      const uploadedResponse = await cloudinary.uploader.upload(image, {
+        folder: "techrevive", // Carpeta donde se almacenará la imagen en Cloudinary
+      });
+      uploadedImageUrls.push(uploadedResponse.secure_url); // Almacenar la URL
+    }
+    console.log(uploadedImageUrls);
+
+    // Crear el nuevo producto con las URLs de las imágenes
+    const newProduct = new Product({
+      title,
+      description,
+      category,
+      price,
+      user_id,
+      image_urls: uploadedImageUrls, // Almacenar las URLs de las imágenes subidas
+    });
+
+    const savedProduct = await newProduct.save();
+    console.log(chalk.magentaBright("Producto guardado:", savedProduct._id));
+
+    res.status(201).json(savedProduct); // Devolver el producto creado
   } catch (error) {
     res.status(500).json({ message: "Error al crear el producto", error });
   }
