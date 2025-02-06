@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import User from "../models/userSchema.js";
+import bcrypt from "bcryptjs";
 
 // GET
 export const getUserById = async (req, res) => {
@@ -29,6 +30,9 @@ export const addUser = async (req, res) => {
   try {
     const newUser = new User(req.body);
 
+    const randomString = await bcrypt.genSalt(10);
+    newUser.password = await bcrypt.hash(newUser.password, randomString); // Encripto la contraseña
+
     const savedUser = await newUser.save();
 
     console.log(chalk.magentaBright("Usuario guardado:", savedUser._id));
@@ -38,3 +42,17 @@ export const addUser = async (req, res) => {
     res.status(500).json({ message: "Error al crear el usuario", error });
   }
 };
+
+/* export const addUser = async (req, res) => {
+  try {
+    const newUser = new User(req.body);
+
+    const savedUser = await newUser.save();
+
+    console.log(chalk.magentaBright("Usuario guardado:", savedUser._id));
+    res.status(201).json(savedUser);
+  } catch (error) {
+    console.error("Error al crear el usuario:", error);
+    res.status(500).json({ message: "Error al crear el usuario", error });
+  }
+}; */
