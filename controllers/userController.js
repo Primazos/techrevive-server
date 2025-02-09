@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import User from "../models/userSchema.js";
+import { upload } from "../config/cloudinaryConfig.js";
 import bcrypt from "bcryptjs";
 
 // GET
@@ -43,16 +44,72 @@ export const addUser = async (req, res) => {
   }
 };
 
-/* export const addUser = async (req, res) => {
+export const loginUser = async (req, res) => {
   try {
-    const newUser = new User(req.body);
+    const { username, password } = req.body;
 
-    const savedUser = await newUser.save();
+    // Verificar si el usuario existe
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
 
-    console.log(chalk.magentaBright("Usuario guardado:", savedUser._id));
-    res.status(201).json(savedUser);
+    // Comparar la contraseña encriptada
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Contraseña incorrecta" });
+    }
+
+    console.log(chalk.greenBright("Usuario autenticado:", user._id));
+
+    // Devolver solo el userId
+    res.status(200).json({ userId: user._id });
   } catch (error) {
-    console.error("Error al crear el usuario:", error);
-    res.status(500).json({ message: "Error al crear el usuario", error });
+    console.error("Error al iniciar sesión:", error);
+    res.status(500).json({ message: "Error al iniciar sesión", error });
   }
-}; */
+};
+
+// PUT
+export const uploadAvatar = async (req, res) => {
+  // Middleware de multer
+  upload.single("avatar")(req, res, async (err) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Error al subir imagen", error: err.message });
+    }
+
+    try {
+      const userId = req.params.id;
+      if (!userId) {
+        return res.status(400).json({ message: "ID de usuario inválido" });
+      }
+
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ message: "Se debe subir una imagen" });
+      }
+
+      // URL de la imagen en Cloudinary
+      const uploadedImageUrl = req.file.path;
+
+      // Actualizar el usuario con la nueva URL del avatar
+      user.avatar_img = uploadedImageUrl;
+      await user.save();
+
+      console.log(chalk.magentaBright("Avatar actualizado:", user._id));
+      res.json({
+        avatar_img: uploadedImageUrl,
+        message: "Avatar actualizado correctamente",
+      });
+    } catch (error) {
+      console.error("Error al subir avatar:", error);
+      res.status(500).json({ message: "Error al subir el avatar", error });
+    }
+  });
+};

@@ -8,10 +8,15 @@ import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 
 const app = express();
-app.use(cors());
 const PORT = 3001;
 
 app.use(express.json());
+
+app.use(cors({
+  origin: "*", // Esto permite solicitudes desde cualquier origen
+  methods: "GET, POST, PUT, DELETE", 
+  allowedHeaders: "Content-Type, Authorization"
+}));
 
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
