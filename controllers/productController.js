@@ -27,14 +27,10 @@ export const getProductsByUserId = async (req, res) => {
     }
 
     const products = await Product.find({ user_id: userId });
-    if (!products.length) {
-      return res
-        .status(404)
-        .json({ message: "No hay productos para este usuario" });
-    }
 
     console.log(chalk.magentaBright("Productos encontrados:", products.length));
-    res.json(products);
+
+    res.status(200).json(products); // 🔹 Devuelve un array vacío en lugar de un error 404
   } catch (error) {
     res
       .status(500)
