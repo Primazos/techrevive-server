@@ -3,6 +3,7 @@ import {
   createMessage,
   getMessagesByChat,
   deleteMessage,
+  deleteAllMessages,
 } from "../controllers/messageController.js";
 
 const router = express.Router();
@@ -15,5 +16,6 @@ router.post("/add-message/", createMessage);
 
 // DELETE
 router.delete("/delete-message/:id", deleteMessage);
+router.delete("/delete-all-messages/:chatId", deleteAllMessages);
 
 export default router;

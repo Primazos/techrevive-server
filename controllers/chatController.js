@@ -1,4 +1,5 @@
 import Chat from "../models/chatSchema.js";
+import User from "../models/userSchema.js";
 import chalk from "chalk";
 
 // GET
@@ -65,6 +66,39 @@ export const createChat = async (req, res) => {
   try {
     const { product_id, seller_id, buyer_id } = req.body;
 
+    // Obtener los datos de los usuarios (vendedor y comprador)
+    const seller = await User.findById(seller_id).select("username");
+    const buyer = await User.findById(buyer_id).select("username");
+
+    // Si no se encuentra alguno de los usuarios, responder con un error
+    if (!seller || !buyer) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // Crear un nuevo chat con los usernames obtenidos
+    const newChat = new Chat({
+      product_id,
+      seller_id,
+      buyer_id,
+      seller_username: seller.username, // Username del vendedor
+      buyer_username: buyer.username,   // Username del comprador
+    });
+
+    // Guardar el chat en la base de datos
+    const savedChat = await newChat.save();
+    console.log(chalk.green("Chat creado:", savedChat._id));
+
+    // Responder con el chat creado
+    res.status(201).json(savedChat);
+  } catch (error) {
+    console.error(chalk.red("Error al crear el chat:", error));
+    res.status(500).json({ message: "Error al crear el chat", error });
+  }
+};
+/* export const createChat = async (req, res) => {
+  try {
+    const { product_id, seller_id, buyer_id } = req.body;
+
     const newChat = new Chat({
       product_id,
       seller_id,
@@ -79,7 +113,7 @@ export const createChat = async (req, res) => {
     console.error(chalk.red("Error al crear el chat:", error));
     res.status(500).json({ message: "Error al crear el chat", error });
   }
-};
+}; */
 
 // DELETE
 export const deleteChat = async (req, res) => {

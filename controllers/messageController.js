@@ -6,9 +6,8 @@ export const getMessagesByChat = async (req, res) => {
   try {
     const chatId = req.params.chatId;
 
-    const messages = await Message.find({ chat_id: chatId }).sort({
-      timestamp: 1,
-    }); // El 1 es para ordenar de mas antiguo a mas nuevo
+    const messages = await Message.find({ chat_id: chatId }).sort({ createdAt: 1 });
+
 
     if (!messages.length) {
       return res.status(404).json({ message: "No hay mensajes en este chat" });
@@ -58,5 +57,23 @@ export const deleteMessage = async (req, res) => {
   } catch (error) {
     console.error(chalk.red("Error al eliminar el mensaje:", error));
     res.status(500).json({ message: "Error al eliminar el mensaje", error });
+  }
+};
+
+export const deleteAllMessages = async (req, res) => {
+  try {
+    const chatId = req.params.chatId;
+    const deletedMessages = await Message.deleteMany({ chat_id: chatId });
+
+    if (!deletedMessages) {
+      return res.status(404).json({ message: "No hay mensajes para eliminar" });
+    }
+
+    res.json(deletedMessages);
+  } catch (error) {
+    console.error(chalk.red("Error al eliminar todos los mensajes:", error));
+    res
+      .status(500)
+      .json({ message: "Error al eliminar todos los mensajes", error });
   }
 };
