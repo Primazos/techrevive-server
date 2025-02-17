@@ -97,6 +97,7 @@ export const addProduct = async (req, res) => {
         price,
         user_id,
         image_urls: uploadedImageUrls,
+        sold: false,
       });
 
       const savedProduct = await newProduct.save();
