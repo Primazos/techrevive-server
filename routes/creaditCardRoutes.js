@@ -1,6 +1,5 @@
 import express from "express";
-import Cart from "../models/Cart.js";
-
+import creditCardSchema from "../models/creditCardSchema.js";
 
 const router = express.Router();
 
@@ -9,13 +8,15 @@ router.post("/add", async (req, res) => {
   const { userId, productId, quantity } = req.body;
 
   try {
-    let cart = await Cart.findOne({ userId });
+    let cart = await creditCardSchema.findOne({ userId });
 
     if (!cart) {
-      cart = new Cart({ userId, items: [] });
+      cart = new creditCardSchema({ userId, items: [] });
     }
 
-    const productIndex = cart.items.findIndex(item => item.productId.toString() === productId);
+    const productIndex = cart.items.findIndex(
+      (item) => item.productId.toString() === productId
+    );
 
     if (productIndex > -1) {
       cart.items[productIndex].quantity += quantity;
@@ -33,7 +34,9 @@ router.post("/add", async (req, res) => {
 // Obtener carrito
 router.get("/:userId", async (req, res) => {
   try {
-    const cart = await Cart.findOne({ userId: req.params.userId }).populate("items.productId");
+    const cart = await creditCardSchema
+      .findOne({ userId: req.params.userId })
+      .populate("items.productId");
     res.status(200).json(cart);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener el carrito", error });
@@ -45,12 +48,15 @@ router.delete("/remove", async (req, res) => {
   const { userId, productId } = req.body;
 
   try {
-    let cart = await Cart.findOne({ userId });
+    let cart = await creditCardSchema.findOne({ userId });
 
-    if (!cart) return res.status(404).json({ message: "Carrito no encontrado" });
+    if (!cart)
+      return res.status(404).json({ message: "Carrito no encontrado" });
 
-    cart.items = cart.items.filter(item => item.productId.toString() !== productId);
-    
+    cart.items = cart.items.filter(
+      (item) => item.productId.toString() !== productId
+    );
+
     await cart.save();
     res.status(200).json(cart);
   } catch (error) {
@@ -59,4 +65,3 @@ router.delete("/remove", async (req, res) => {
 });
 
 export default router;
-

@@ -7,7 +7,7 @@ import productRoutes from "./routes/productRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 // ✅ Código con import correcto para ES Modules
-import creaditCardsRoutes from "./routes/cartRoutes.js";
+import creaditCardsRoutes from "./routes/creaditCardRoutes.js";
 
 const app = express();
 const PORT = 3001;
