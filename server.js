@@ -26,7 +26,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/messages", messageRoutes);
-app.use("/api/creaditCards", creaditCardsRoutes);
+app.use("/api/creadit-cards", creaditCardsRoutes);
 
 app.get("/", (req, res) => {
   res.send({
