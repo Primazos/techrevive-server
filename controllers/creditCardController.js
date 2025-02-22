@@ -5,6 +5,13 @@ export const getCreditCardsByUser = async (req, res) => {
   try {
     const { userId } = req.params;
     const creditCards = await CreditCard.find({ user_id: userId });
+
+    // Verifica si solo hay una tarjeta y la marca como predeterminada
+    if (creditCards.length === 1) {
+      creditCards[0].is_default = true;
+      await creditCards[0].save(); // Guarda los cambios
+    }
+
     res.status(200).json(creditCards);
   } catch (error) {
     res.status(500).json({ error: "Error al obtener los creditos de usuario" });
