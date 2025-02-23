@@ -141,6 +141,30 @@ export const updateProduct = async (req, res) => {
   }
 };
 
+// PATCH
+export const markProductAsSold = async (req, res) => {
+  const { id } = req.params; 
+
+  try {
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { sold: true },
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Producto no encontrado" });
+    }
+
+    // Responder con el producto actualizado
+    res.status(200).json(updatedProduct);
+  } catch (error) {
+    console.error("Error al marcar el producto como vendido:", error);
+    res.status(500).json({ message: "Error al procesar la solicitud" });
+  }
+};
+
 // DELETE
 export const deleteProduct = async (req, res) => {
   try {

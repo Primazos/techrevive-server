@@ -5,6 +5,7 @@ import {
   getProductsByCategory,
   addProduct,
   updateProduct,
+  markProductAsSold,
   deleteProduct,
 } from "../controllers/productController.js";
 
@@ -20,6 +21,9 @@ router.post("/add-product/", addProduct);
 
 // PUT
 router.put("/update-product/:id", updateProduct);
+
+// PATCH
+router.patch("/mark-product-as-sold/:id", markProductAsSold); 
 
 // DELETE
 router.delete("/delete-product/:id", deleteProduct);

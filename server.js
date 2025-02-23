@@ -7,6 +7,7 @@ import productRoutes from "./routes/productRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import creditCardsRoutes from "./routes/creditCardRoutes.js";
+import transactionRoutes from "./routes/transactionRoutes.js";
 
 const app = express();
 const PORT = 3001;
@@ -16,7 +17,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: "*", // Esto permite solicitudes desde cualquier origen
-    methods: "GET, POST, PUT, DELETE",
+    methods: "GET, POST, PUT, PATCH, DELETE",
     allowedHeaders: "Content-Type, Authorization",
   })
 );
@@ -26,6 +27,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/credit-cards", creditCardsRoutes);
+app.use("/api/transactions", transactionRoutes);
 
 app.get("/", (req, res) => {
   res.send({
