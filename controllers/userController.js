@@ -48,13 +48,11 @@ export const loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Verificar si el usuario existe
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    // Comparar la contraseña encriptada
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Contraseña incorrecta" });
@@ -62,7 +60,6 @@ export const loginUser = async (req, res) => {
 
     console.log(chalk.greenBright("Usuario autenticado:", user._id));
 
-    // Devolver solo el userId
     res.status(200).json({ userId: user._id });
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
@@ -72,7 +69,6 @@ export const loginUser = async (req, res) => {
 
 // PUT
 export const uploadAvatar = async (req, res) => {
-  // Middleware de multer
   upload.single("avatar")(req, res, async (err) => {
     if (err) {
       return res
@@ -95,10 +91,8 @@ export const uploadAvatar = async (req, res) => {
         return res.status(400).json({ message: "Se debe subir una imagen" });
       }
 
-      // URL de la imagen en Cloudinary
       const uploadedImageUrl = req.file.path;
 
-      // Actualizar el usuario con la nueva URL del avatar
       user.avatar_img = uploadedImageUrl;
       await user.save();
 

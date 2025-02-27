@@ -30,7 +30,7 @@ export const getProductsByUserId = async (req, res) => {
 
     console.log(chalk.magentaBright("Productos encontrados:", products.length));
 
-    res.status(200).json(products); // 🔹 Devuelve un array vacío en lugar de un error 404
+    res.status(200).json(products);
   } catch (error) {
     res
       .status(500)
@@ -157,7 +157,6 @@ export const markProductAsSold = async (req, res) => {
       return res.status(404).json({ message: "Producto no encontrado" });
     }
 
-    // Responder con el producto actualizado
     res.status(200).json(updatedProduct);
   } catch (error) {
     console.error("Error al marcar el producto como vendido:", error);

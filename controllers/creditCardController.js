@@ -6,10 +6,9 @@ export const getCreditCardsByUser = async (req, res) => {
     const { userId } = req.params;
     const creditCards = await CreditCard.find({ user_id: userId });
 
-    // Verifica si solo hay una tarjeta y la marca como predeterminada
     if (creditCards.length === 1) {
       creditCards[0].is_default = true;
-      await creditCards[0].save(); // Guarda los cambios
+      await creditCards[0].save();
     }
 
     res.status(200).json(creditCards);

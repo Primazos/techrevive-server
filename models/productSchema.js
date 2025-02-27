@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
-  _id: { type: String, default: () => new mongoose.Types.ObjectId() }, // Generar _id automáticamente
+  _id: { type: String, default: () => new mongoose.Types.ObjectId() },
   title: { type: String, required: true },
   description: { type: String },
   category: { type: String },

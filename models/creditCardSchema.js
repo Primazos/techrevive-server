@@ -3,9 +3,9 @@ import { Schema } from "mongoose";
 
 const creditCardSchema = new Schema({
   user_id: {
-    type: mongoose.Schema.Types.ObjectId, // Cambiado de UUID a ObjectId
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "User", // Relacionado con el modelo 'User'
+    ref: "User",
   },
   card_number: {
     type: String,

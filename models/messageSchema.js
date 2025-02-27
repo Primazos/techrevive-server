@@ -4,8 +4,8 @@ import { Schema } from "mongoose";
 const messageSchema = new Schema(
   {
     chat_id: {
-      type: mongoose.Schema.Types.ObjectId, // Para hacer referencia al chat
-      ref: "Chat", // Relación con el modelo `Chat`
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Chat",
       required: true,
     },
     sender_id: {
@@ -17,7 +17,7 @@ const messageSchema = new Schema(
       required: true,
     },
   },
-  { timestamps: true } // Uso esto para que mongoose gestione los campos createdAt y updatedAt automáticamente
+  { timestamps: true }
 );
 
 const Message = mongoose.model("Message", messageSchema);
